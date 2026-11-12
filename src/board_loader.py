@@ -7,10 +7,13 @@ from typing import Any
 
 
 def load_ats_boards(root: Path, config: dict[str, Any]) -> dict[str, list]:
-    rel = config.get("ats_boards_file") or "ats_boards.yaml"
-    path = Path(rel)
-    if not path.is_absolute():
-        path = root / path
+    rel = str(config.get("ats_boards_file") or "ats_boards.yaml")
+    candidates = [
+        Path(rel) if Path(rel).is_absolute() else root / rel,
+        root / "config" / Path(rel).name,
+        root / Path(rel).name,
+    ]
+    path = next((p for p in candidates if p.exists()), candidates[0])
     if not path.exists():
         return {}
     import yaml

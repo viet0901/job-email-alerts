@@ -31,7 +31,11 @@ def _seed_max_linkedin_id() -> int:
     global _MAX_LINKEDIN_JOB_ID
     if _MAX_LINKEDIN_JOB_ID > 0:
         return _MAX_LINKEDIN_JOB_ID
-    db_path = Path(__file__).resolve().parents[2] / "seen_jobs.db"
+    root = Path(__file__).resolve().parents[2]
+    db_path = next(
+        (p for p in (root / "data" / "seen_jobs.db", root / "seen_jobs.db") if p.exists()),
+        root / "data" / "seen_jobs.db",
+    )
     if not db_path.exists():
         return _MAX_LINKEDIN_JOB_ID
     try:

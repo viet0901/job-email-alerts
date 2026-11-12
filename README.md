@@ -4,20 +4,39 @@ Polls **350+ direct company career sites** (`Greenhouse`, `Lever`, `Ashby`, `Wor
 
 ---
 
-## Run in the Cloud 24/7 with GitHub Actions
+## Project Structure
 
-A workflow is pre-configured in `.github/workflows/job_alerts.yml` to run **every 15 minutes** and automatically persist `seen_jobs.db` back to the repository so you never get duplicate emails.
-
-### 1. Create a GitHub Repository & Push
-Create a new repository on GitHub (e.g., `job-email-alerts`), then run:
-
-```bash
-git remote add origin https://github.com/<your-username>/job-email-alerts.git
-git push -u origin main
+```text
+job_email/
+├── .github/workflows/job_alerts.yml  # 24/7 cloud runner (every 15 min)
+├── config/
+│   ├── config.yaml                   # Pipeline settings, filters & search terms
+│   ├── profile.yaml                  # Candidate resume (VietN_Resume.pdf)
+│   ├── ats_boards.yaml               # 350+ company career boards catalog
+│   └── allowed_companies.yaml        # Priority / H-1B sponsor allowlist
+├── data/
+│   └── seen_jobs.db                  # SQLite state & cross-source dedupe history
+├── scripts/
+│   └── build_ats_boards.py           # Regenerates config/ats_boards.yaml
+├── src/
+│   ├── filters/                      # Location, company, repost, title, newgrad, sponsorship
+│   ├── scoring/                      # Gemini + Groq scorer & ATS bullet customizer
+│   ├── sources/                      # Greenhouse, Lever, Ashby, Workday, SR, Amazon, Netflix, LinkedIn
+│   ├── board_loader.py               # Loads config/ats_boards.yaml
+│   ├── db.py                         # SQLite persistence & clone-repost detection
+│   ├── dedupe.py                     # Cross-source job fingerprint deduplication
+│   ├── emailer.py                    # HTML + plain-text digest builder & Gmail SMTP
+│   ├── models.py                     # Job dataclass
+│   └── pipeline.py                   # Batch filtering, scoring, and emailing
+├── main.py                           # CLI entrypoint
+└── requirements.txt                  # Python dependencies
 ```
 
-### 2. Add Repository Secrets
-In your GitHub repo, go to **Settings → Secrets and variables → Actions → New repository secret** and add:
+---
+
+## Run in the Cloud 24/7 with GitHub Actions
+
+In your GitHub repo (`https://github.com/viet0901/job-email-alerts`), go to **Settings → Secrets and variables → Actions → New repository secret** and add:
 
 | Secret Name | Value (from your `.env`) |
 |---|---|
@@ -27,33 +46,17 @@ In your GitHub repo, go to **Settings → Secrets and variables → Actions → 
 | `SMTP_PASSWORD` | Your 16-character Gmail App Password |
 | `EMAIL_TO` | Comma-separated recipient emails |
 
-### 3. Trigger a Test Run
-Go to the **Actions** tab on GitHub → **New-Grad Job Email Alerts** → **Run workflow** → choose `live`, `dry-run`, or `test-email`.
-
 ---
 
-## Local Setup & Commands
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-```
+## Local Commands
 
 ```bash
 # Verify Gmail SMTP
-python main.py --test-email
+.venv/bin/python main.py --test-email
 
 # Score + print without sending email
-python main.py --dry-run
+.venv/bin/python main.py --dry-run
 
 # Live run
-python main.py
-```
-
-### Local Cron (every 15 min)
-
-```cron
-*/15 * * * * cd /Users/minhvietnguyen/Documents/job_email && .venv/bin/python main.py >> logs/run.log 2>&1
+.venv/bin/python main.py
 ```

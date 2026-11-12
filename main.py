@@ -20,15 +20,29 @@ from src.emailer import send_test_email
 from src.pipeline import process_batch
 from src.sources.ashby import fetch_all_boards as fetch_ashby_boards
 from src.sources.first_party import fetch_all_first_party
-from src.sources.github_fallback import fetch_github_jobs
 from src.sources.greenhouse import fetch_all_boards
 from src.sources.handshake import fetch_handshake_jobs
-from src.sources.jobright import fetch_all_categories
 from src.sources.jobspy_boards import fetch_jobspy_jobs
 from src.sources.lever import fetch_all_boards as fetch_lever_boards
 from src.sources.linkedin import fetch_linkedin_jobs
 from src.sources.smartrecruiters import fetch_all_boards as fetch_smartrecruiters_boards
 from src.sources.workday import fetch_all_boards as fetch_workday_boards
+
+
+def _resolve_config_path(filename: str) -> Path:
+    for candidate in (ROOT / "config" / filename, ROOT / filename):
+        if candidate.exists():
+            return candidate
+    return ROOT / "config" / filename
+
+
+def _resolve_db_path() -> Path:
+    data_db = ROOT / "data" / "seen_jobs.db"
+    legacy_db = ROOT / "seen_jobs.db"
+    if data_db.exists() or not legacy_db.exists():
+        data_db.parent.mkdir(parents=True, exist_ok=True)
+        return data_db
+    return legacy_db
 
 
 def load_yaml(path: Path) -> dict:
@@ -41,7 +55,9 @@ def load_allowed_companies(config: dict) -> list[str]:
     names = [str(x).strip() for x in (config.get("allowed_companies") or []) if x]
     rel = config.get("allowed_companies_file")
     if rel:
-        path = ROOT / str(rel)
+        path = _resolve_config_path(Path(str(rel)).name)
+        if not path.exists():
+            path = ROOT / str(rel)
         if path.exists():
             data = load_yaml(path)
             extra = data.get("allowed_companies") if isinstance(data, dict) else data
@@ -68,15 +84,6 @@ def fetch_jobs(config: dict, *, phase: str = "all", allow_empty: bool = False) -
     phase=all: both.
     """
     sources = config.get("sources") or {}
-    if not sources and config.get("categories"):
-        sources = {
-            "jobright": {
-                "enabled": True,
-                "categories": config.get("categories"),
-                "github_fallback": config.get("github_fallback", True),
-            }
-        }
-
     all_jobs: list = []
     seen_ids: set[str] = set()
     ats_catalog = load_ats_boards(ROOT, config)
@@ -224,19 +231,6 @@ def fetch_jobs(config: dict, *, phase: str = "all", allow_empty: bool = False) -
         except Exception as exc:  # noqa: BLE001
             print(f"Handshake fetch failed: {exc}")
 
-    jr = sources.get("jobright") or {}
-    if do_slow and jr.get("enabled", False):
-        categories = jr.get("categories") or ["data_analysis"]
-        try:
-            _add(fetch_all_categories(categories), f"Jobright ({', '.join(categories)})")
-        except Exception as exc:  # noqa: BLE001
-            print(f"Jobright fetch failed: {exc}")
-            if jr.get("github_fallback", True):
-                try:
-                    _add(fetch_github_jobs(), "GitHub fallback")
-                except Exception as gh_exc:  # noqa: BLE001
-                    print(f"GitHub fallback failed: {gh_exc}")
-
     if not all_jobs:
         if allow_empty:
             print(f"No jobs fetched in phase={phase}")
@@ -250,8 +244,8 @@ def fetch_jobs(config: dict, *, phase: str = "all", allow_empty: bool = False) -
 
 def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
     load_dotenv(ROOT / ".env")
-    config = load_yaml(ROOT / "config.yaml")
-    profile = load_yaml(ROOT / "profile.yaml")
+    config = load_yaml(_resolve_config_path("config.yaml"))
+    profile = load_yaml(_resolve_config_path("profile.yaml"))
 
     threshold = float(config.get("score_threshold", 0.80))
     max_jobs = int(
@@ -290,7 +284,7 @@ def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
         max_repost_age_minutes=max_repost_age_minutes,
         reject_reposts=reject_reposts,
     )
-    db = JobDB(ROOT / "seen_jobs.db")
+    db = JobDB(_resolve_db_path())
     filled = db.backfill_fingerprints()
     if filled:
         print(f"DB: backfilled {filled} fingerprints for cross-source dedupe")
@@ -414,9 +408,9 @@ def main() -> None:
         raise SystemExit(0)
     if args.purge_db:
         load_dotenv(ROOT / ".env")
-        config = load_yaml(ROOT / "config.yaml")
+        config = load_yaml(_resolve_config_path("config.yaml"))
         days = int(config.get("db_retention_days", 7))
-        db = JobDB(ROOT / "seen_jobs.db")
+        db = JobDB(_resolve_db_path())
         n = db.purge_older_than(days)
         db.close()
         print(f"Purged {n} jobs older than {days} days")

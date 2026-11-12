@@ -472,7 +472,8 @@ def main() -> int:
         "workday": WORKDAY,
         "smartrecruiters": SMARTRECRUITERS,
     }
-    out = ROOT / "ats_boards.yaml"
+    out = ROOT / "config" / "ats_boards.yaml"
+    out.parent.mkdir(parents=True, exist_ok=True)
     dump_yaml(out, data)
     print(
         f"Wrote {out} "

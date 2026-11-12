@@ -1,16 +1,54 @@
-# Direct large/mid-size company career sites (not LinkedIn/Indeed aggregators).
-# Full Greenhouse/Lever/Ashby/Workday/SmartRecruiters catalog: ats_boards.yaml
+# Direct large/mid-size company career sites + LinkedIn new-grad search.
+# Full Greenhouse/Lever/Ashby/Workday/SmartRecruiters catalog: config/ats_boards.yaml
 # Regenerated with: python scripts/build_ats_boards.py
-ats_boards_file: ats_boards.yaml
+ats_boards_file: config/ats_boards.yaml
 
 sources:
   greenhouse:
     enabled: true
     workers: 12
-    # boards loaded from ats_boards.yaml
+
+  lever:
+    enabled: true
+    workers: 10
+
+  ashby:
+    enabled: true
+    workers: 10
+
+  smartrecruiters:
+    enabled: true
+    workers: 6
+
+  workday:
+    enabled: true
+    limit: 20
+    board_workers: 8
+    search_terms:
+      - Data Scientist
+      - Data Analyst
+      - Machine Learning
+      - Quantitative Analyst
+      - New Grad Data
+      - Early Career Data
+
+  first_party:
+    enabled: true
+    search_terms:
+      - Data Scientist
+      - Data Analyst
+      - Machine Learning
+      - AI Engineer
+      - New Grad Data Scientist
+      - New Grad Data Analyst
+    limit_per_term: 40
+    sites:
+      - amazon
+      - netflix
+      - microsoft
 
   linkedin:
-    enabled: true  # guest scrape (no login); reposts & non-new-grad filtered out
+    enabled: true  # guest scrape (no login); 3-layer repost & non-new-grad filter
     location: United States
     hours_old: 48
     results_per_search: 15
@@ -29,148 +67,6 @@ sources:
       - Data Scientist I
       - Data Analyst I
       - university grad Data Scientist
-
-  # Public Handshake city pages (no login). Small slice of total Handshake;
-  # full student feed stays auth-walled.
-  handshake:
-    enabled: false
-    hours_old: 168   # public Handshake slice updates slowly; 72h was too strict
-    results_wanted: 40
-    cities:
-      - new-york-ny
-      - san-francisco-ca
-      - san-jose-ca
-      - seattle-wa
-      - boston-ma
-      - austin-tx
-      - chicago-il
-      - los-angeles-ca
-      - washington-dc
-      - denver-co
-      - atlanta-ga
-      - remote
-    search_terms:
-      - data analyst
-      - data scientist
-      - AI engineer
-      - machine learning
-      - junior data
-      - entry level analyst
-      - business intelligence
-      - RAG
-      - generative AI
-      - LLM engineer
-
-  # Google Jobs / Indeed / Glassdoor via python-jobspy (unofficial; can rate-limit)
-  # Google often returns 0 when blocked; Indeed is the reliable jobspy board.
-  google:
-    enabled: false
-    location: United States
-    hours_old: 168
-    results_per_search: 25
-    search_terms:
-      - AI engineer new grad
-      - data analyst new grad
-      - data scientist new grad
-      - machine learning engineer new grad
-      - RAG engineer entry level
-      - generative AI engineer junior
-      - LLM engineer new grad
-      - junior data analyst
-
-  indeed:
-    enabled: false
-    location: United States
-    hours_old: 72
-    results_per_search: 20
-    search_terms:
-      - new grad AI engineer
-      - new grad data analyst
-      - new grad data scientist
-      - junior machine learning engineer
-      - entry level RAG engineer
-      - junior LLM engineer
-
-  glassdoor:
-    enabled: false  # jobspy location parsing often 400s; enable if it works for you
-    location: United States
-    hours_old: 72
-    results_per_search: 15
-    search_terms:
-      - AI engineer new grad
-      - data analyst new grad
-      - data scientist entry level
-      - machine learning engineer junior
-
-  # ZipRecruiter via python-jobspy (often 403 / Cloudflare — off by default)
-  zip_recruiter:
-    enabled: false
-    location: United States
-    hours_old: 72
-    results_per_search: 20
-    search_terms:
-      - new grad data analyst
-      - new grad data scientist
-      - junior AI engineer
-      - entry level machine learning
-      - junior data analyst bachelor
-
-  # Lever public boards (official JSON API — reliable like Greenhouse)
-  lever:
-    enabled: true
-    workers: 10
-    # boards loaded from ats_boards.yaml
-
-  # Ashby public boards (official JSON API — OpenAI, Cursor, etc.)
-  ashby:
-    enabled: true
-    workers: 10
-    # boards loaded from ats_boards.yaml
-
-  # SmartRecruiters public API (US postings)
-  smartrecruiters:
-    enabled: true
-    workers: 6
-    # boards loaded from ats_boards.yaml
-
-  # Workday public career sites (CXS JSON API) — most Fortune 500 boards
-  workday:
-    enabled: true
-    limit: 20
-    board_workers: 8
-    search_terms:
-      - Data Scientist
-      - Data Analyst
-      - Machine Learning
-      - Quantitative Analyst
-      - New Grad Data
-      - Early Career Data
-    # boards loaded from ats_boards.yaml
-
-  # Official company career sites that are not Greenhouse/Lever/Ashby/Workday
-  first_party:
-    enabled: true
-    search_terms:
-      - Data Scientist
-      - Data Analyst
-      - Machine Learning
-      - AI Engineer
-      - New Grad Data Scientist
-      - New Grad Data Analyst
-    limit_per_term: 40
-    sites:
-      - amazon
-      - netflix
-      - microsoft
-
-  # Slower aggregator — keep off unless you want extra coverage
-  jobright:
-    enabled: false
-    categories:
-      - data_analysis
-      - ml_ai
-      - data_engineer
-    github_fallback: true
 
 # Email only jobs scoring at or above this (0–1)
 # 0.60 catches known-company DA/DS near-misses (e.g. Spotify 1+ years scored 0.62)
@@ -328,7 +224,7 @@ interest_keywords:
 # while hard-blocking staffing agencies, recruiting firms, and reposting job boards below.
 # Large/priority companies in company_priority still get an automatic score boost + instant DS email.
 require_allowed_company: false
-allowed_companies_file: allowed_companies.yaml
+allowed_companies_file: config/allowed_companies.yaml
 
 # Hard-reject AI job platforms / aggregators (they re-post stale listings as "employer")
 blocked_companies:

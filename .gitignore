@@ -7,6 +7,9 @@ __pycache__/
 *.pyc
 .Python
 .DS_Store
+data/seen_jobs.db-journal
+data/seen_jobs.db-wal
+data/seen_jobs.db-shm
 seen_jobs.db-journal
 seen_jobs.db-wal
 seen_jobs.db-shm
