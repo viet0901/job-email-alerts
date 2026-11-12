@@ -1,0 +1,12 @@
+.venv/
+venv/
+.env
+logs/
+__pycache__/
+**/__pycache__/
+*.pyc
+.Python
+.DS_Store
+seen_jobs.db-journal
+seen_jobs.db-wal
+seen_jobs.db-shm

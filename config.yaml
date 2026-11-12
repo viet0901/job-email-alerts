@@ -1,0 +1,489 @@
+# Direct large/mid-size company career sites (not LinkedIn/Indeed aggregators).
+# Full Greenhouse/Lever/Ashby/Workday/SmartRecruiters catalog: ats_boards.yaml
+# Regenerated with: python scripts/build_ats_boards.py
+ats_boards_file: ats_boards.yaml
+
+sources:
+  greenhouse:
+    enabled: true
+    workers: 12
+    # boards loaded from ats_boards.yaml
+
+  linkedin:
+    enabled: true  # guest scrape (no login); reposts & non-new-grad filtered out
+    location: United States
+    hours_old: 48
+    results_per_search: 15
+    search_terms:
+      - new grad Data Scientist
+      - new grad Data Analyst
+      - new grad AI Engineer
+      - new grad Machine Learning Engineer
+      - recent graduate Data Scientist
+      - recent graduate Data Analyst
+      - entry level Data Scientist
+      - entry level Data Analyst
+      - entry level AI Engineer
+      - junior Data Scientist
+      - junior Data Analyst
+      - Data Scientist I
+      - Data Analyst I
+      - university grad Data Scientist
+
+  # Public Handshake city pages (no login). Small slice of total Handshake;
+  # full student feed stays auth-walled.
+  handshake:
+    enabled: false
+    hours_old: 168   # public Handshake slice updates slowly; 72h was too strict
+    results_wanted: 40
+    cities:
+      - new-york-ny
+      - san-francisco-ca
+      - san-jose-ca
+      - seattle-wa
+      - boston-ma
+      - austin-tx
+      - chicago-il
+      - los-angeles-ca
+      - washington-dc
+      - denver-co
+      - atlanta-ga
+      - remote
+    search_terms:
+      - data analyst
+      - data scientist
+      - AI engineer
+      - machine learning
+      - junior data
+      - entry level analyst
+      - business intelligence
+      - RAG
+      - generative AI
+      - LLM engineer
+
+  # Google Jobs / Indeed / Glassdoor via python-jobspy (unofficial; can rate-limit)
+  # Google often returns 0 when blocked; Indeed is the reliable jobspy board.
+  google:
+    enabled: false
+    location: United States
+    hours_old: 168
+    results_per_search: 25
+    search_terms:
+      - AI engineer new grad
+      - data analyst new grad
+      - data scientist new grad
+      - machine learning engineer new grad
+      - RAG engineer entry level
+      - generative AI engineer junior
+      - LLM engineer new grad
+      - junior data analyst
+
+  indeed:
+    enabled: false
+    location: United States
+    hours_old: 72
+    results_per_search: 20
+    search_terms:
+      - new grad AI engineer
+      - new grad data analyst
+      - new grad data scientist
+      - junior machine learning engineer
+      - entry level RAG engineer
+      - junior LLM engineer
+
+  glassdoor:
+    enabled: false  # jobspy location parsing often 400s; enable if it works for you
+    location: United States
+    hours_old: 72
+    results_per_search: 15
+    search_terms:
+      - AI engineer new grad
+      - data analyst new grad
+      - data scientist entry level
+      - machine learning engineer junior
+
+  # ZipRecruiter via python-jobspy (often 403 / Cloudflare — off by default)
+  zip_recruiter:
+    enabled: false
+    location: United States
+    hours_old: 72
+    results_per_search: 20
+    search_terms:
+      - new grad data analyst
+      - new grad data scientist
+      - junior AI engineer
+      - entry level machine learning
+      - junior data analyst bachelor
+
+  # Lever public boards (official JSON API — reliable like Greenhouse)
+  lever:
+    enabled: true
+    workers: 10
+    # boards loaded from ats_boards.yaml
+
+  # Ashby public boards (official JSON API — OpenAI, Cursor, etc.)
+  ashby:
+    enabled: true
+    workers: 10
+    # boards loaded from ats_boards.yaml
+
+  # SmartRecruiters public API (US postings)
+  smartrecruiters:
+    enabled: true
+    workers: 6
+    # boards loaded from ats_boards.yaml
+
+  # Workday public career sites (CXS JSON API) — most Fortune 500 boards
+  workday:
+    enabled: true
+    limit: 20
+    board_workers: 8
+    search_terms:
+      - Data Scientist
+      - Data Analyst
+      - Machine Learning
+      - Quantitative Analyst
+      - New Grad Data
+      - Early Career Data
+    # boards loaded from ats_boards.yaml
+
+  # Official company career sites that are not Greenhouse/Lever/Ashby/Workday
+  first_party:
+    enabled: true
+    search_terms:
+      - Data Scientist
+      - Data Analyst
+      - Machine Learning
+      - AI Engineer
+      - New Grad Data Scientist
+      - New Grad Data Analyst
+    limit_per_term: 40
+    sites:
+      - amazon
+      - netflix
+      - microsoft
+
+  # Slower aggregator — keep off unless you want extra coverage
+  jobright:
+    enabled: false
+    categories:
+      - data_analysis
+      - ml_ai
+      - data_engineer
+    github_fallback: true
+
+# Email only jobs scoring at or above this (0–1)
+# 0.60 catches known-company DA/DS near-misses (e.g. Spotify 1+ years scored 0.62)
+score_threshold: 0.60
+
+# Max jobs included in a single digest email per run
+max_jobs_per_email: 8
+
+# Email Data Scientist @ target companies immediately (don't wait for digest to fill)
+send_priority_ds_immediately: true
+
+# Cap how many NEW jobs get LLM-scored per run (avoids burning quota on first Greenhouse dump)
+max_score_per_run: 40
+
+# Only keep US (or US-remote) roles. Unclear cities / "N Locations" without a
+# US country code are dropped. Generic "Remote" with no foreign country still passes.
+require_us: true
+reject_unknown_location: true
+
+# Only keep undergrad / bachelor's new-grad / entry-level roles.
+# Rejects PhD/research tracks, 2+ years experience in JD, and senior titles.
+# Strict mode requires an explicit new-grad/junior/entry signal in the TITLE
+# (title-family match alone is not enough).
+require_new_grad: true
+strict_new_grad: true
+undergrad_only: true
+newgrad_require_title_signal: true
+
+# Freshness: only alert on true first-publish date (ignore ATS updated_at repost bumps).
+reject_reposts: true
+max_job_age_minutes: 10080  # 7 days
+require_recent_timestamp: false  # allow LinkedIn/Handshake jobs missing dates
+max_repost_age_days: 7  # backup guard when reject_reposts is off
+# Never-emailed scored jobs can still catch up within this window (digest overflow)
+catchup_grace_minutes: 10080  # 7 days
+
+# Auto-delete seen_jobs rows older than this many days (45d keeps fingerprint history to block LinkedIn reposts)
+db_retention_days: 45
+
+title_families:
+  data_analyst:
+    match:
+      - data analyst
+      - junior data analyst
+      - analytics analyst
+      - business data analyst
+      - product data analyst
+      - marketing data analyst
+      - operations analyst
+      - decision analyst
+      - insights analyst
+      - bi analyst
+      - business intelligence analyst
+    possible:
+      - business analyst
+      - product analyst
+      - strategy analyst
+      - analytics associate
+    reject:
+      - financial analyst
+      - investment analyst
+      - cybersecurity analyst
+      - senior data analyst
+      - director of analytics
+      - staff data analyst
+      - principal data analyst
+      - lead data analyst
+
+  data_scientist:
+    match:
+      - data scientist
+      - junior data scientist
+      - associate data scientist
+      - decision scientist
+      - applied data scientist
+      - product data scientist
+      - machine learning data scientist
+      - ai data scientist
+      - ml engineer
+      - machine learning engineer
+    possible:
+      - applied scientist
+    reject:
+      - research scientist
+      - research data scientist
+      - senior data scientist
+      - staff data scientist
+      - principal data scientist
+      - director of data science
+      - vp of data
+
+  ai_engineer:
+    match:
+      - ai engineer
+      - junior ai engineer
+      - associate ai engineer
+      - llm engineer
+      - rag engineer
+      - generative ai engineer
+      - genai engineer
+      - ai/ml engineer
+      - applied ai engineer
+      - mlops engineer
+      - prompt engineer
+      - ai agent
+      - agentic
+    possible:
+      - ai developer
+      - llm
+      - generative ai
+      - foundation model
+    reject:
+      - senior ai engineer
+      - staff ai engineer
+      - principal ai engineer
+      - director of ai
+      - vp of ai
+      - research engineer
+      - applied ai architect
+      - ai architect
+      - software engineer
+      - software developer
+      - ai software engineer
+      - machine learning software engineer
+
+# Keywords that boost resume_fit when found in the JD (AI focus)
+interest_keywords:
+  - rag
+  - retrieval-augmented
+  - retrieval augmented
+  - qwen
+  - local llm
+  - on-device llm
+  - ollama
+  - vllm
+  - llama.cpp
+  - open-source llm
+  - open source llm
+  - cursor
+  - claude code
+  - claude
+  - codex
+  - openai codex
+  - agentic
+  - ai agent
+  - embeddings
+  - vector database
+  - vector store
+  - langchain
+  - llamaindex
+  - fine-tun
+  - inference
+
+# Keep direct employers (including mid-size firms like TrueSense Marketing on LinkedIn)
+# while hard-blocking staffing agencies, recruiting firms, and reposting job boards below.
+# Large/priority companies in company_priority still get an automatic score boost + instant DS email.
+require_allowed_company: false
+allowed_companies_file: allowed_companies.yaml
+
+# Hard-reject AI job platforms / aggregators (they re-post stale listings as "employer")
+blocked_companies:
+  - jobright
+  - jobrion
+  - emploid
+  - wellfound
+  - otta
+  - simplify.jobs
+  - simplify jobs
+  - huntr
+  - lazyapply
+  - fetchjobs
+  - hiredbuddy
+  - hiremap
+  - supraijobs
+  - jobs ai
+  - that startup job
+  - next-gen jobs
+  - jobsinmass
+  - careerscape
+  - careerselite
+  - welcome to the jungle
+  - levels.fyi
+  - arc.dev
+  - braintrust
+  # Staffing / recruiting agencies (not direct employers)
+  - guidehouse
+  - randstad
+  - adecco
+  - kforce
+  - teksystems
+  - insight global
+  - apex systems
+  - motion recruitment
+  - robert half
+  - cybercoders
+  - aerotek
+  - allegis group
+  - manpower
+  - kelly services
+  - collabera
+  - mindlance
+  - modis
+  - hays
+  - express employment
+  - staffmark
+  - pridestaff
+  - spherion
+  - appleone
+  - lhh
+  - michael page
+  - emonics
+  - matricstek
+  - amoha
+  - rk infotech
+  - talenthop
+  - talentally
+  - synergisticit
+  - revature
+  - genspark
+  - beaconfire
+  - smoothstack
+  - fdm group
+  - skillstorm
+  - pyramid consulting
+  - compunnel
+  - akraya
+  - lancesoft
+  - artech
+  - dexian
+
+# Soft preference boost for these company name substrings (optional)
+company_priority:
+  - stripe
+  - notion
+  - airbnb
+  - databricks
+  - snowflake
+  - google
+  - meta
+  - facebook
+  - microsoft
+  - amazon
+  - apple
+  - anthropic
+  - openai
+  - cursor
+  - anysphere
+  - huggingface
+  - hugging face
+  - cohere
+  - perplexity
+  - scale ai
+  - spotify
+  - nvidia
+  - palantir
+  - adobe
+  - salesforce
+  - netflix
+  - uber
+  - lyft
+  - tiktok
+  - bytedance
+  - mastercard
+  - visa
+  - american express
+  - capital one
+  - jpmorgan
+  - goldman
+  - morgan stanley
+  - citi
+  - bank of america
+  - wells fargo
+  - bloomberg
+  - blackrock
+  - fidelity
+  - vanguard
+  - two sigma
+  - citadel
+  - jane street
+  - barclays
+  - hsbc
+  - ubs
+  - deutsche
+  - bny
+  - schwab
+  - state street
+  - pnc
+  - truist
+  - discover
+  - paypal
+  - doordash
+  - instacart
+  - robinhood
+  - coinbase
+  - figma
+  - dropbox
+  - cloudflare
+  - datadog
+  - shopify
+  - block
+  - square
+  - plaid
+  - affirm
+
+# Preferred location keywords (case-insensitive); empty = no location filter boost only
+preferred_locations:
+  - remote
+  - united states
+  - new york
+  - nyc
+  - california
+  - bay area
+  - seattle
+  - boston
+  - austin
+  - chicago

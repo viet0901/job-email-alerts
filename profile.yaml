@@ -1,0 +1,139 @@
+name: Viet Nguyen
+contact:
+  phone: 740-915-5170
+  email: minhviet0901@gmail.com
+  github: github.com/viet0901
+
+default_resume: /Users/minhvietnguyen/Documents/New Grad 26/Data Science (ML)/VietN_Resume.pdf
+
+education:
+  university: Denison University
+  location: Granville, OH
+  degree: Bachelor of Science in Data Analytics and Mathematics
+  gpa: 3.78/4.00
+  expected_graduation: December 2026
+  coursework:
+    - Statistical Modeling
+    - Predictive Modeling
+    - Data Systems
+    - Econometrics
+    - Economics of Banking
+  awards:
+    - 1st Place – ASA DataFest
+    - 1st Place – Big Red Data Challenge
+    - 2nd Place – Undergraduate Statistics Project Competition
+    - 2nd Place – Econ Games
+    - Top 6 – HackAIthon 2026
+    - Pi Mu Epsilon
+    - Data Analytics Senior Fellow
+
+skills:
+  languages_and_libraries:
+    - Python (pandas, scikit-learn, PySpark, PyTorch, TensorFlow)
+    - SQL
+    - R (caret, dplyr, ggplot2)
+  tools:
+    - Snowflake
+    - Tableau
+    - Excel
+    - Streamlit
+    - Docker
+    - GitHub
+    - Jira
+    - Claude Code
+    - Codex
+    - DuckDB
+    - MySQL
+    - Azure VM
+    - ChromaDB
+  ml_and_statistics:
+    - Regression
+    - Classification
+    - Random Forest
+    - XGBoost
+    - Deep Learning
+    - NLP
+    - Computer Vision
+    - LLMs
+    - Time Series (SARIMA)
+    - Monte Carlo Simulation
+    - Bayesian Inference
+    - Hypothesis Testing
+    - A/B Testing
+    - SHAP
+    - Survival Analysis
+    - K-means Clustering
+    - RFM Scoring
+    - Grad-CAM
+
+experience:
+  - company: VIUM Capital
+    location: Columbus, OH
+    role: AI Engineer Intern
+    dates: May 2026 – Aug 2026
+    bullets:
+      - Developed a human-in-the-loop LLM application with Claude + Azure VM to extract data from 200+ client financial statements, reducing processing time by 98% while automating adjusted revenue, expense, and DSCR calculations
+      - Engineered an automated AI news briefing system with Python and GenAI to monitor 20+ senior-housing sources and filter, rank, and summarize 1,200+ articles, saving executives 15 minutes/day of manual news research
+      - Built a self-refreshing analytics dashboard with Python, DuckDB, and FRED API to automate 5 economic indicators, eliminating 4+ hours/month of manual Excel reporting
+
+  - company: Park National Bank
+    location: Newark, OH
+    role: Data Science Intern
+    dates: May 2025 – April 2026
+    bullets:
+      - Developed a Random Forest classifier on 100,000+ commercial deals to automate loan review, achieving 90% test accuracy and supporting $12M+ in monthly approvals
+      - Analyzed 500,000+ customer records with Snowflake SQL and Tableau to identify account trends, generate AI-assisted product recommendations, and deliver insights to call-center teams and executives
+      - Developed a deal complexity scoring framework and Tableau dashboard to quantify 100+ analyst productivity, enabling 15+ Credit Managers to optimize workload distribution
+
+  - company: Benefactor Group
+    location: Columbus, OH
+    role: Data Science Intern
+    dates: January 2025 – May 2025
+    bullets:
+      - Implemented an inflation-adjusted Monte Carlo simulation in Python to model fundraising goal feasibility from donation distributions, reducing model run time from 8 hours in Excel to 5 seconds
+      - Built a data pipeline to standardize 50,000+ donation records across client formats, enabling cross-client comparisons of channel performance and year-over-year fundraising trends
+
+  - company: Legacy Agencies
+    location: Oak Brook, IL
+    role: Data Science Intern
+    dates: October 2024 – May 2025
+    bullets:
+      - Collaborated with the CTO to apply logistic regression to 8,000 marketing records, identifying engagement patterns that informed campaign changes and helped increase engagement rate by 10%
+      - Co-developed a relational MySQL database to replace third-party CRM software, defining schemas and relationships, migrating 300,000+ client records, and reducing annual software costs by $2,000
+
+projects:
+  - name: "Weak Signals, Broad Attention: CNN Interpretability Study"
+    recognition: 2nd Place – Undergraduate Statistics Project Competition
+    bullets:
+      - Led a team of 4 to train a CNN on 10,000+ candlestick images from 30 technology stocks, using temporal splits, balanced sampling, and focal loss to classify volatility-adjusted 10-day price movements
+      - Applied Grad-CAM, occlusion sensitivity, and 2,000-sample bootstrapping to analyze model behavior, showing that predictive information was distributed across the 30-day chart with the greatest emphasis on recent trading days
+
+  - name: "GiveSmart: Predictive Donor Analytics"
+    recognition: 1st Place – Big Red Data Challenge
+    bullets:
+      - Led a team of 4 to analyze 50,000 donation records across 7 years, combining RFM scoring and K-means clustering to define 5 donor segments and using survival analysis to estimate optimal re-engagement timing
+      - Developed an inflation-adjusted SARIMA forecast to project next-year donations and identify opportunities to improve donor retention and program performance, presenting recommendations through a Tableau dashboard
+
+  - name: "AI-assisted Workflow Pipeline"
+    organization: The Law Office of Bryan B. Davenport (via Red Frame Lab)
+    bullets:
+      - Developed a hybrid LLM and rule-based classifier using OpenAI o3 to identify accident-related claims from narratives and ICD-10 descriptions, achieving 95% validation accuracy and reducing analyst review time by 90%
+      - Automated claims review across 12+ TPA report formats by retrieving unseen ICD-10 descriptions through an API and maintaining a self-updating ChromaDB knowledge base with confidence scoring and human review
+
+targets:
+  - Undergrad New Grad Data Scientist (Dec 2026 / 2027)
+  - Undergrad New Grad AI / ML Engineer
+  - Undergrad New Grad Data Analyst / Quantitative Analyst
+
+experience_level: Undergraduate new graduate (Dec 2026 B.S. in Data Analytics & Mathematics, 0–2 years)
+
+visa: F-1 / OPT considerations
+
+notes: >
+  Use this single default resume (Data Science (ML)/VietN_Resume.pdf) for all
+  matching, scoring, and bullet tailoring. Candidate graduates December 2026
+  with a B.S. in Data Analytics and Mathematics from Denison University (3.78 GPA)
+  and has 4 internships (VIUM Capital AI Engineer Intern, Park National Bank
+  Data Science Intern, Benefactor Group Data Science Intern, Legacy Agencies
+  Data Science Intern). Reject Master's/PhD-only roles and roles requiring 2+
+  years of full-time experience.

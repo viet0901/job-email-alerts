@@ -1,0 +1,1270 @@
+# Expanded allowlist: mid/large + well-known employers
+# Sources: S&P 500, top H-1B sponsors FY2024–2025, Fortune 500, AI/product firms.
+# Matched as case-insensitive substrings (longer terms win).
+
+allowed_companies:
+  - 3i infotech
+  - 3m
+  - abbott
+  - abbvie
+  - accenture
+  - activecampaign
+  - adidas
+  - adobe
+  - adp
+  - advanced
+  - advanced micro
+  - advanced micro devices
+  - aecom
+  - aecom technical
+  - aerospace
+  - aetna
+  - aetna resources
+  - affirm
+  - aflac
+  - agilent
+  - airbnb
+  - airbyte
+  - airlines
+  - airtable
+  - akamai
+  - akuna
+  - albemarle
+  - alexandria
+  - align
+  - allegion
+  - allen
+  - alliant
+  - allstate
+  - ally
+  - ally financial
+  - alphabet
+  - alto
+  - altria
+  - amazon
+  - amazon advertising
+  - amazon development
+  - amazon development center
+  - amazon web
+  - amazoncom
+  - amcor
+  - amd
+  - ameren
+  - america
+  - american airlines
+  - american express
+  - americas
+  - ameriprise
+  - ametek
+  - amgen
+  - amgen orporated
+  - amphenol
+  - amplitude
+  - analog
+  - analog devices
+  - analysts
+  - anduril
+  - ansys
+  - anthem
+  - anthropic
+  - antra
+  - anysphere
+  - apollo
+  - apple
+  - applied
+  - applied materials
+  - applovin
+  - aptiv
+  - arch
+  - archer
+  - archer daniels
+  - archer daniels midland
+  - ares
+  - arista
+  - arizona university
+  - arthur
+  - arthur j
+  - arthur j gallagher
+  - arts
+  - asana
+  - asml
+  - asml lp
+  - assurant
+  - astrazeneca
+  - astrazeneca pharmaceuticals
+  - astrazeneca pharmaceuticals lp
+  - at t
+  - at&t
+  - athletic
+  - atlassian
+  - atmos
+  - atos
+  - atos syntel
+  - audible
+  - autodesk
+  - automatic
+  - automatic processing
+  - automotive
+  - autozone
+  - avalonbay
+  - avalonbay communities
+  - avco
+  - avco consulting
+  - avery
+  - avery dennison
+  - aws
+  - axon
+  - axon enterprise
+  - axtria
+  - bain
+  - baker
+  - baker hughes
+  - ball
+  - bancorp
+  - bank of america
+  - barclays
+  - battelle
+  - battelle memorial
+  - battelle memorial institute
+  - baxter
+  - baylor
+  - baylor college
+  - baylor college medicine
+  - bb&t
+  - becton
+  - becton dickinson
+  - berkley
+  - berkshire
+  - berkshire hathaway
+  - best buy
+  - binance.us
+  - bio-techne
+  - biogen
+  - birlasoft
+  - blackrock
+  - blackstone
+  - block
+  - bloomberg
+  - bloomberg lp
+  - bny mellon
+  - boeing
+  - bofa
+  - bofa securities
+  - booking
+  - booz
+  - booz allen
+  - boston
+  - boston consulting
+  - boston scientific
+  - box
+  - brands
+  - brex
+  - bridgewater
+  - brigham
+  - brigham women
+  - brigham women s
+  - brillio
+  - bristol
+  - bristol myers
+  - bristol myers squibb
+  - bristol-myers
+  - bristol-myers squibb
+  - broadcom
+  - broadridge
+  - brokers
+  - brown
+  - brown brown
+  - brown forman
+  - builders
+  - builders firstsource
+  - bunge
+  - business
+  - business machines
+  - bytedance
+  - cadence
+  - cadence design
+  - calendly
+  - camden
+  - camden property
+  - camden property trust
+  - canva
+  - capgemini
+  - capgemini america
+  - capital one
+  - cardinal
+  - caremark
+  - carnival
+  - carrier
+  - carvana
+  - casey
+  - casey s
+  - caterpillar
+  - cboe
+  - cbre
+  - cencora
+  - centene
+  - centerpoint
+  - cerner
+  - character.ai
+  - charles
+  - charles river
+  - charles schwab
+  - charter
+  - chevron
+  - chewy
+  - children
+  - children s
+  - children s hospital
+  - chime
+  - chipotle
+  - chipotle mexican
+  - chipotle mexican grill
+  - chubb
+  - chubb limited
+  - church
+  - church dwight
+  - ciena
+  - cigna
+  - cigna-evernorth
+  - cincinnati
+  - cintas
+  - cisco
+  - citadel
+  - citibank
+  - citigroup
+  - citiustech
+  - citizens
+  - clorox
+  - cloudflare
+  - coca-cola
+  - coforge
+  - coforge limited
+  - cognizant
+  - cohere
+  - coherent
+  - coinbase
+  - colgate-palmolive
+  - collaborate
+  - columbia university
+  - comcast
+  - comfort
+  - commcast
+  - companies
+  - compunnel
+  - compunnel software
+  - computer
+  - computer sciences
+  - concentrix
+  - concentrix cvg
+  - concentrix cvg customer
+  - confluent
+  - connectivity
+  - conocophillips
+  - consolidated
+  - consolidated edison
+  - constellation
+  - constellation brands
+  - consultancy
+  - cooper
+  - cooper companies
+  - copart
+  - cornell
+  - cornell university
+  - corning
+  - corpay
+  - corteva
+  - costar
+  - costco
+  - cox automotive
+  - cox automotive orate
+  - credit
+  - credit suisse
+  - credit suisse securities
+  - crowdstrike
+  - crown
+  - crown castle
+  - cummins
+  - curators
+  - curators university
+  - curators university missouri
+  - cursor
+  - cvs
+  - cvs health
+  - cvs pharmacy
+  - d r
+  - d r horton
+  - dallas
+  - dallas independent
+  - dallas independent school
+  - dana-farber
+  - dana-farber cancer
+  - dana-farber cancer institute
+  - danaher
+  - darden
+  - darden restaurants
+  - databricks
+  - datadog
+  - davita
+  - db core
+  - dbt
+  - dbt labs
+  - de shaw
+  - deckers
+  - deckers brands
+  - deepmind
+  - deere
+  - dell
+  - dell lp
+  - deloitte
+  - deloitte consulting
+  - deloitte tax
+  - deloitte touche
+  - delta
+  - deutsche
+  - deutsche securities
+  - devon
+  - dexcom
+  - dfs orate
+  - diamondback
+  - discord
+  - discover
+  - discover financial
+  - dish
+  - disney
+  - docusign
+  - dollar
+  - dollar tree
+  - dominion
+  - domino
+  - domino s
+  - doordash
+  - dover
+  - dropbox
+  - duke
+  - duke university
+  - duolingo
+  - dupont
+  - dynamics
+  - eaton
+  - ebay
+  - echostar
+  - eclinicalworks
+  - ecolab
+  - edison
+  - edwards
+  - edwards lifesciences
+  - eficens
+  - elastic
+  - electronic
+  - electronic arts
+  - electronics
+  - elevance
+  - elevenlabs
+  - eli
+  - eli lilly
+  - emcor
+  - emerson
+  - emory
+  - emory university
+  - entergy
+  - eog resources
+  - epam
+  - epsilon
+  - equifax
+  - equinix
+  - ericsson
+  - experian
+  - erie
+  - erie indemnity
+  - ernst
+  - ernst & young
+  - ernst and young
+  - ernst young
+  - erp analysts
+  - essex
+  - essex property
+  - essex property trust
+  - est e
+  - est e lauder
+  - etsy
+  - everest
+  - evergy
+  - eversource
+  - exelon
+  - exlservicecom
+  - expand
+  - expedia
+  - expeditors
+  - express
+  - extra
+  - extra space
+  - extra space storage
+  - exxonmobil
+  - face
+  - facebook
+  - factset
+  - fair
+  - fair isaac
+  - fargo
+  - fastenal
+  - fastly
+  - federal
+  - federal express
+  - federal investment
+  - federal investment trust
+  - fedex
+  - fedex freight
+  - fedex orate
+  - fidelity
+  - fidelity d
+  - fidelity d fidelity
+  - fidelity information
+  - fifth
+  - fifth third
+  - fifth third bancorp
+  - figma
+  - firstenergy
+  - fiserv
+  - fivetran
+  - flavors
+  - flavors fragrances
+  - flex
+  - ford
+  - fortinet
+  - fortive
+  - franklin
+  - franklin resources
+  - freeport-mcmoran
+  - games
+  - garmin
+  - gartner
+  - ge aerospace
+  - ge vernova
+  - genentech
+  - generac
+  - general motors
+  - genpact
+  - genuine
+  - genuine parts
+  - georgia institute
+  - gilead
+  - gilead sciences
+  - github
+  - gitlab
+  - globallogic
+  - globe
+  - godaddy
+  - godaddycom
+  - goldman
+  - goldman sachs
+  - google
+  - government
+  - government employees
+  - government employees geico
+  - grainger
+  - grammarly
+  - groq
+  - grossman
+  - gusto
+  - h robinson
+  - halliburton
+  - hartford
+  - harvard
+  - harvard university
+  - hasbro
+  - hashicorp
+  - hat
+  - hcl
+  - hcl america
+  - hcltech
+  - headstrong
+  - healthpeak
+  - healthpeak properties
+  - henry
+  - henry ford
+  - henry ford system
+  - henry schein
+  - hershey
+  - hewlett
+  - hewlett packard
+  - hewlett packard enterprise
+  - hexaware
+  - hilton
+  - hilton worldwide
+  - home depot
+  - honeywell
+  - honeywell aerospace
+  - hormel
+  - horton
+  - hospital
+  - host
+  - host hotels
+  - host hotels resorts
+  - howard
+  - howard hughes
+  - howard hughes medical
+  - howmet
+  - howmet aerospace
+  - hpe
+  - hubbell
+  - hubbell incorporated
+  - hubspot
+  - hudson
+  - hudson river
+  - hugging
+  - hugging face
+  - huggingface
+  - hughes
+  - humana
+  - hunt
+  - huntington
+  - huntington bancshares
+  - huntington ingalls
+  - hynix
+  - ibm
+  - ibm india
+  - ibm india private
+  - icahn
+  - icahn school
+  - icahn school medicine
+  - idex
+  - idexcel
+  - idexx
+  - illinois tool
+  - illinois tool works
+  - illumina
+  - income
+  - incyte
+  - indeed
+  - india
+  - indiana university
+  - infinite
+  - infinite computer
+  - infocons
+  - informatica
+  - infosys
+  - infosys limited
+  - infotech
+  - ingersoll
+  - ingersoll rand
+  - instacart
+  - institutes
+  - institutes hhs
+  - instruments
+  - insulet
+  - intel
+  - intercom
+  - intercontinental
+  - intercontinental exchange
+  - intraedge
+  - intuit
+  - intuition
+  - intuitive
+  - intuitive surgical
+  - intuitive surgical operations
+  - invesco
+  - invitation
+  - invitation homes
+  - iowa university
+  - iowa university science
+  - iqvia
+  - iris
+  - iris software
+  - iron
+  - iron mountain
+  - j hunt
+  - j m
+  - j m smucker
+  - jabil
+  - jack
+  - jack henry
+  - jack henry associates
+  - jacobs
+  - jane
+  - jb hunt
+  - jb hunt transport
+  - jefferies
+  - johns
+  - johns hopkins
+  - johns hopkins university
+  - johnson
+  - johnson & johnson
+  - johnson controls
+  - johnson johnson
+  - jp morgan
+  - jpmorgan
+  - jpmorgan chase
+  - jude
+  - jump
+  - juniper
+  - karma
+  - kenvue
+  - keurig
+  - keurig dr
+  - keurig dr pepper
+  - key bank
+  - keybank
+  - keycorp
+  - keysight
+  - kimberly-clark
+  - kimco
+  - kinder
+  - kinder morgan
+  - kpit
+  - kpmg
+  - kraft
+  - kraft heinz
+  - kraken
+  - kroger
+  - l t
+  - l3harris
+  - labcorp
+  - lam research
+  - larsen
+  - larsen toubro
+  - larsen toubro infotech
+  - las vegas
+  - las vegas sands
+  - lauder
+  - lawrence
+  - lawrence berkeley
+  - lawrence berkeley tional
+  - leaders
+  - leidos
+  - leland
+  - leland stanford
+  - leland stanford jr
+  - lennar
+  - lennox
+  - lg electronics
+  - lilly
+  - lilly eli
+  - linde
+  - linear
+  - linkedin
+  - live
+  - live nation
+  - lockheed
+  - lockheed martin
+  - loews
+  - looker
+  - lowe
+  - lowe s
+  - lowe s companies
+  - lowe's
+  - ltimindtree
+  - ltimindtree limited
+  - lucid
+  - lululemon
+  - lululemon athletica
+  - lumentum
+  - lyft
+  - lyondellbasell
+  - m t
+  - m&t bank
+  - machines
+  - mahindra
+  - maplebear
+  - marathon
+  - marathon petroleum
+  - marlabs
+  - marriott
+  - marsh
+  - marsh mclennan
+  - martin
+  - martin marietta
+  - martin marietta materials
+  - marvell
+  - marvell semiconductor
+  - masco
+  - massachusetts institute
+  - mastech
+  - mastercard
+  - mathworks
+  - mayo
+  - mayo clinic
+  - mccormick
+  - mcdonald
+  - mcdonald s
+  - mckesson
+  - mckinsey
+  - medline
+  - medline lp
+  - medtronic
+  - mellon
+  - memorial
+  - memorial sloan
+  - memorial sloan kettering
+  - merck
+  - mercury
+  - meta
+  - meta platforms
+  - metlife
+  - mettler
+  - mettler toledo
+  - mgm resorts
+  - michigan university
+  - microchip
+  - micron
+  - microsoft
+  - mid-america
+  - mid-america apartment
+  - mid-america apartment communities
+  - midjourney
+  - millennium
+  - mills
+  - milwaukee
+  - milwaukee board
+  - milwaukee board school
+  - mindtree
+  - mindtree limited
+  - miracle
+  - miracle software
+  - miro
+  - mistral
+  - mixpanel
+  - moderna
+  - molson
+  - molson coors
+  - molson coors beverage
+  - monday.com
+  - mondelez
+  - mongodb
+  - monolithic
+  - monolithic power
+  - monster
+  - monster beverage
+  - moody
+  - moody s
+  - moody s analytics
+  - morgan
+  - morgan stanley
+  - mosaic
+  - motorola
+  - mpg operations
+  - mphasis
+  - msci
+  - mt bank
+  - nagarro
+  - nasdaq
+  - natsoft
+  - nerdwallet
+  - netapp
+  - netflix
+  - new relic
+  - newmont
+  - news
+  - nextera
+  - nike
+  - nisource
+  - nisum
+  - nokia
+  - nokia america
+  - nordson
+  - nordstrom
+  - norfolk
+  - norfolk southern
+  - north
+  - north carolina
+  - north carolina university
+  - northern
+  - northern trust
+  - northrop
+  - northrop grumman
+  - northwestern
+  - northwestern university
+  - norwegian
+  - norwegian cruise
+  - notion
+  - novartis
+  - ntt americas
+  - nucor
+  - nuro
+  - nutanix
+  - nvidia
+  - nxp semiconductors
+  - nyu grossman
+  - nyu grossman school
+  - o reilly
+  - o reilly automotive
+  - o smith
+  - oath
+  - occidental
+  - occidental petroleum
+  - ohio university
+  - okta
+  - old dominion
+  - omnicom
+  - on semiconductor
+  - oneok
+  - openai
+  - operations
+  - optiver
+  - optum
+  - oracle
+  - oracle america
+  - orate
+  - otis
+  - otis worldwide
+  - paccar
+  - packaging
+  - packaging america
+  - packard
+  - palantir
+  - palo
+  - palo alto
+  - palo alto networks
+  - paper
+  - paramount
+  - paramount skydance
+  - parcel
+  - parcel service
+  - parker
+  - parker hannifin
+  - paychex
+  - paycom
+  - paycom payroll
+  - payments
+  - paypal
+  - pennsylvania university
+  - pentair
+  - people
+  - people tech
+  - pepsico
+  - perficient
+  - perplexity
+  - persistent
+  - persistent limited
+  - pfizer
+  - pg e
+  - pharmacy
+  - philip
+  - philip morris
+  - phillips
+  - phillips 66
+  - photon
+  - photon infotech
+  - pinnacle
+  - pinnacle west
+  - pinterest
+  - pioneer
+  - pioneer consulting
+  - plaid
+  - pnc
+  - pnc bank
+  - pnc financial
+  - point72
+  - power
+  - pricewaterhousecoopers
+  - pricewaterhousecoopers advisory
+  - principal
+  - procter
+  - procter gamble
+  - progressive
+  - prokarma
+  - prologis
+  - prudential
+  - public
+  - public service
+  - public service enterprise
+  - public storage
+  - pultegroup
+  - purdue
+  - purdue university
+  - pure
+  - pure storage
+  - pwc
+  - qnity
+  - qnity electronics
+  - qualcomm
+  - qualcomm atheros
+  - qualtrics
+  - quanta
+  - quest
+  - quest diagnostics
+  - quest services-
+  - ralph
+  - ralph lauren
+  - ramp
+  - raymond
+  - raymond james
+  - raytheon
+  - red
+  - red hat
+  - reddit
+  - regency
+  - regency centers
+  - regeneron
+  - regeneron pharmaceuticals
+  - regions
+  - reilly
+  - relic
+  - rentals
+  - replit
+  - republic
+  - research
+  - residential
+  - resmed
+  - resources
+  - revvity
+  - riot
+  - rippling
+  - river
+  - rivian
+  - robinhood
+  - robinson
+  - roblox
+  - roche
+  - rockwell
+  - rockwell automation
+  - rockwell collins
+  - roku
+  - rollins
+  - roper
+  - ross
+  - rowe
+  - royal
+  - royal caribbean
+  - rtx
+  - runway
+  - rutgers
+  - rutgers university
+  - rutgers university jersey
+  - s p
+  - salesforce
+  - salesforcecom
+  - samsara
+  - samsung
+  - samsung austin
+  - samsung austin semiconductor
+  - samsung electronics
+  - samsung electronics america
+  - sandisk
+  - santander
+  - sap
+  - sap america
+  - sapphire
+  - sapphire software
+  - savannah
+  - savannah chatham
+  - savannah chatham county
+  - scale
+  - scale ai
+  - schlumberger
+  - schwab
+  - seagate
+  - segment
+  - semiconductor
+  - sempra
+  - sentinelone
+  - servicenow
+  - shaw
+  - sherwin-williams
+  - shopify
+  - siemens
+  - siemens industry
+  - siemens industry software
+  - sigma
+  - simon
+  - simon property
+  - skilltune
+  - skyworks
+  - slack
+  - slalom
+  - slk america
+  - smartsheet
+  - smith
+  - smucker
+  - smurfit
+  - smurfit westrock
+  - snap
+  - snap-on
+  - snowflake
+  - sofi
+  - solar
+  - solventum
+  - sony
+  - southern
+  - southwest
+  - southwest airlines
+  - southwestern
+  - spacex
+  - splunk
+  - spotify
+  - square
+  - srs consulting
+  - st jude
+  - st jude children
+  - stability
+  - stanley
+  - stanley black
+  - stanley black decker
+  - starbucks
+  - starbucks coffee
+  - state farm
+  - steel
+  - steel dynamics
+  - steris
+  - street
+  - street trust
+  - stripe
+  - stryker
+  - suntrust
+  - supermicro
+  - susquehanna
+  - synapsis
+  - synchrony
+  - synechron
+  - synopsys
+  - syntel
+  - sysco
+  - system
+  - system soft
+  - t rowe
+  - t rowe price
+  - t-mobile
+  - tableau
+  - take-two
+  - tapestry
+  - targa
+  - targa resources
+  - target
+  - target enterprise
+  - tata
+  - tata consultancy
+  - tavant
+  - te connectivity
+  - tech mahindra
+  - tech mahindra americas
+  - technosoft
+  - tek leaders
+  - tekorg
+  - teledyne
+  - teradyne
+  - tesla
+  - texas instruments
+  - texas instruments orporated
+  - texas m
+  - texas m university
+  - texas pacific
+  - texas pacific land
+  - textron
+  - the athletic
+  - thermo
+  - thermo fisher
+  - thermo fisher scientific
+  - thinking
+  - thinking machines
+  - tiktok
+  - tional
+  - tional association
+  - tjx companies
+  - toast
+  - together
+  - together ai
+  - tower
+  - toyota
+  - tractor
+  - tractor supply
+  - trade
+  - trade desk
+  - trading
+  - trane
+  - transdigm
+  - transunion
+  - travelers
+  - travelers companies
+  - triad
+  - triad tional
+  - trimble
+  - truist
+  - trustees
+  - trustees boston
+  - trustees boston university
+  - trustees princeton
+  - trustees princeton university
+  - trustees university
+  - trustees university pennsylvania
+  - twilio
+  - twitter
+  - two
+  - tyler
+  - tyson
+  - u s
+  - u s bancorp
+  - u.s. bank
+  - uber
+  - ubs business
+  - ulta
+  - ulta beauty
+  - union
+  - union pacific
+  - united airlines
+  - unitedhealth
+  - unity
+  - universal
+  - university
+  - university alabama
+  - university alabama at
+  - university california
+  - university california berkeley
+  - university california davis
+  - university california los
+  - university california san
+  - university chicago
+  - university colorado
+  - university florida
+  - university illinois
+  - university iowa
+  - university maryland
+  - university maryland college
+  - university miami
+  - university michigan
+  - university minnesota
+  - university north
+  - university north carolina
+  - university pittsburgh
+  - university southern
+  - university southern california
+  - university texas
+  - university texas at
+  - university texas md
+  - university utah
+  - university virginia
+  - university washington
+  - university wisconsin
+  - university wisconsin system
+  - ups
+  - us bancorp
+  - us bank
+  - ust
+  - ust global
+  - ut southwestern
+  - ut southwestern medical
+  - ut-battelle
+  - ut-battelle oak
+  - ut-battelle oak ridge
+  - v-soft
+  - v-soft consulting
+  - valero
+  - veeva
+  - vegas
+  - ventas
+  - ventois
+  - veralto
+  - vercel
+  - veridic
+  - verisign
+  - verisk
+  - verisk analytics
+  - verizon
+  - verkada
+  - vernova
+  - vertex
+  - vertex pharmaceuticals
+  - vertex pharmaceuticals orporated
+  - vertiv
+  - viatris
+  - vici
+  - vici properties
+  - virginia polytechnic
+  - virginia polytechnic institute
+  - virtusa
+  - virtusa consulting
+  - virtusa consulting pvt
+  - visa
+  - visa operations
+  - vista
+  - vista applied
+  - vistra
+  - vmware
+  - vulcan
+  - vulcan materials
+  - w r
+  - w r berkley
+  - w w
+  - w w grainger
+  - wabtec
+  - wal-mart
+  - wal-mart associates
+  - walmart
+  - walt
+  - walt disney
+  - warner
+  - warner bros
+  - warner bros discovery
+  - washington university
+  - waste
+  - water
+  - water works
+  - waters
+  - wayfair
+  - waymo
+  - webflow
+  - weill
+  - weill cornell
+  - weill cornell medical
+  - wells
+  - wells fargo
+  - welltower
+  - west
+  - west pharmaceutical
+  - western
+  - weyerhaeuser
+  - williams
+  - williams companies
+  - williams-sonoma
+  - willis
+  - willis towers
+  - willis towers watson
+  - wipro
+  - wipro limited
+  - workday
+  - wynn
+  - wynn resorts
+  - xai
+  - xcel
+  - xilinx
+  - xylem
+  - yale
+  - yale university
+  - young
+  - yum brands
+  - zebra
+  - zendesk
+  - zensar
+  - zillow
+  - zimmer
+  - zimmer biomet
+  - zoetis
+  - zoom
+  - zoox
+  - zs associates
+  - zscaler
+  # Large banks / financial services (allowlist match on company name)
+  - aig
+  - aqr
+  - bbva
+  - bmo
+  - brookfield
+  - carlyle
+  - fidelity investments
+  - flow traders
+  - freddie mac
+  - gsa capital
+  - hsbc
+  - imc
+  - jane street
+  - lseg
+  - man group
+  - morningstar
+  - pdt partners
+  - s&p global
+  - t. rowe
+  - t. rowe price
+  - ubs
+  - vanguard
+  - virtu financial
+  - wellington
+  - winton
+  - worldquant

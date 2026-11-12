@@ -1,0 +1,82 @@
+name: New-Grad Job Email Alerts
+
+on:
+  schedule:
+    # Runs every 15 minutes, 24/7
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: false
+        default: "live"
+        type: choice
+        options:
+          - live
+          - dry-run
+          - test-email
+
+concurrency:
+  group: job-alerts-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  poll-and-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run job alert pipeline
+        env:
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER || 'gemini' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-3.6-flash' }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'openai/gpt-oss-120b' }}
+          SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ vars.SMTP_PORT || '587' }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM || secrets.SMTP_USER }}
+        run: |
+          if [ "${{ github.event.inputs.mode }}" = "dry-run" ]; then
+            python main.py --dry-run
+          elif [ "${{ github.event.inputs.mode }}" = "test-email" ]; then
+            python main.py --test-email
+          else
+            python main.py
+          fi
+
+      - name: Persist seen_jobs.db state
+        if: always() && github.event.inputs.mode != 'test-email'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add seen_jobs.db
+          if git diff --staged --quiet; then
+            echo "No changes to seen_jobs.db"
+          else
+            git commit -m "chore(state): update seen_jobs.db [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
