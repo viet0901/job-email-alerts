@@ -13,6 +13,16 @@ STATE_BRANCH = "job-state"
 DB_REL_PATH = "data/seen_jobs.db"
 
 
+def _redact_git_output(text: str) -> str:
+    """Keep git errors useful without echoing embedded credentials."""
+    import re
+
+    cleaned = re.sub(r"https://[^@\s/]+@", "https://***@", text or "")
+    cleaned = re.sub(r"(gh[pousr]_|github_pat_)[A-Za-z0-9_]+", "***", cleaned)
+    cleaned = " ".join(cleaned.split())
+    return cleaned[:400] or "unknown error"
+
+
 def pull_and_merge_remote_state(root: Path, db: JobDB) -> int:
     """
     Fetch `origin/job-state` (if reachable) and merge its `seen_jobs` rows into `db`
@@ -124,6 +134,8 @@ def push_remote_state(root: Path, db_path: Path) -> bool:
         if push_res.returncode == 0:
             print(f"State sync: pushed {DB_REL_PATH} to origin/{STATE_BRANCH}")
             return True
+        detail = _redact_git_output(push_res.stderr or push_res.stdout or "")
+        print(f"State sync push failed: {detail}")
         return False
     except Exception as exc:  # noqa: BLE001
         print(f"State sync push skipped: {exc}")

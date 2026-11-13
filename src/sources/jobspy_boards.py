@@ -487,94 +487,135 @@ def _patch_linkedin_repost_detection(*, hours_old: float = 24.0) -> None:
          where LinkedIn hides 'Reposted' and shows '1 hour ago' on old job IDs).
       2. Card / detail HTML 'Reposted' text & originalListedAt timestamps.
     Also skips fetching full detail pages for cards already identified as reposts.
+
+    python-jobspy 1.2 renamed `_get_job_details` to `_fetch_details` and dropped the
+    `full_descr` argument on `_process_job`. A failed patch must not abort the scrape.
     """
     global _LINKEDIN_REPOST_PATCHED, _PATCHED_MAX_HOURS_OLD
     _PATCHED_MAX_HOURS_OLD = float(hours_old or 24.0)
     if _LINKEDIN_REPOST_PATCHED:
         return
     try:
+        import inspect
         from datetime import datetime as _dt
 
         from jobspy.linkedin import LinkedIn
+
+        orig_process = LinkedIn._process_job
+        if hasattr(LinkedIn, "_fetch_details"):
+            details_name = "_fetch_details"
+        elif hasattr(LinkedIn, "_get_job_details"):
+            details_name = "_get_job_details"
+        else:
+            details_name = None
+        orig_details = getattr(LinkedIn, details_name) if details_name else None
+        process_params = [
+            name
+            for name in inspect.signature(orig_process).parameters
+            if name != "self"
+        ]
+        accepts_full_descr = len(process_params) >= 3
+
+        def _capture_details(self, job_id: str) -> dict:
+            captured: dict[str, str] = {}
+            orig_get = self.session.get
+
+            def _cap_get(*args, **kwargs):
+                resp = orig_get(*args, **kwargs)
+                captured["html"] = getattr(resp, "text", "") or ""
+                return resp
+
+            self.session.get = _cap_get  # type: ignore[method-assign]
+            try:
+                details = orig_details(self, job_id)
+            finally:
+                self.session.get = orig_get  # type: ignore[method-assign]
+            self._last_repost_meta = _parse_linkedin_timestamps(captured.get("html", ""))
+            return details
+
+        def _process_job(self, job_card, job_id, full_descr=None):
+            frontier = _update_max_linkedin_id_from_card(job_card, str(job_id))
+            claimed_hours = _parse_card_claimed_hours(job_card)
+            card_reposted = _linkedin_card_is_reposted(job_card)
+            id_reposted, id_lag = _is_linkedin_id_repost(
+                job_id,
+                max_id=frontier,
+                claimed_hours=claimed_hours,
+                max_hours_old=_PATCHED_MAX_HOURS_OLD,
+            )
+
+            # Skip the slow /jobs/view/{id} request for known reposts so we don't
+            # waste time or trigger 429s. Newer jobspy reads scraper_input.fetch_description;
+            # older jobspy takes a full_descr argument.
+            skip_details = bool(card_reposted or id_reposted)
+            self._last_repost_meta = {}
+            scraper_input = getattr(self, "scraper_input", None)
+            prev_fetch = None
+            if (
+                skip_details
+                and scraper_input is not None
+                and hasattr(scraper_input, "fetch_description")
+            ):
+                prev_fetch = scraper_input.fetch_description
+                scraper_input.fetch_description = False
+            try:
+                if accepts_full_descr:
+                    job_post = orig_process(
+                        self,
+                        job_card,
+                        job_id,
+                        False if skip_details else bool(full_descr),
+                    )
+                else:
+                    job_post = orig_process(self, job_card, job_id)
+            finally:
+                if prev_fetch is not None:
+                    scraper_input.fetch_description = prev_fetch
+            if job_post is None:
+                return None
+
+            time_tag = _linkedin_card_time(job_card)
+            if job_post.date_posted is None and time_tag is not None:
+                raw_dt = time_tag.get("datetime")
+                if raw_dt:
+                    try:
+                        job_post.date_posted = _dt.strptime(str(raw_dt)[:10], "%Y-%m-%d").date()
+                    except ValueError:
+                        pass
+            elif isinstance(job_post.date_posted, _dt):
+                job_post.date_posted = job_post.date_posted.date()
+
+            meta = getattr(self, "_last_repost_meta", {}) or {}
+            is_reposted = bool(card_reposted or id_reposted or meta.get("is_reposted"))
+            orig_ms = meta.get("original_listed_at_ms")
+            if orig_ms and job_post.date_posted is not None:
+                dp = job_post.date_posted
+                listed_ms = int(_dt(dp.year, dp.month, dp.day).timestamp() * 1000)
+                if listed_ms - orig_ms > _REPOST_HOUR_MS:
+                    is_reposted = True
+            if orig_ms:
+                try:
+                    job_post.date_posted = _dt.utcfromtimestamp(orig_ms / 1000.0).date()
+                except (OSError, OverflowError, ValueError):
+                    pass
+
+            if is_reposted:
+                job_post.listing_type = "repost"
+                desc = job_post.description or ""
+                reason_note = (
+                    f"Reposted (LinkedIn ID lag={id_lag:,}).\n"
+                    if id_reposted
+                    else "Reposted.\n"
+                )
+                if "reposted" not in desc.lower():
+                    job_post.description = reason_note + desc
+            return job_post
+
+        if orig_details is not None and details_name is not None:
+            setattr(LinkedIn, details_name, _capture_details)
+        LinkedIn._process_job = _process_job  # type: ignore[method-assign]
+        _LINKEDIN_REPOST_PATCHED = True
     except ImportError:
         return
-
-    orig_process = LinkedIn._process_job
-    orig_details = LinkedIn._get_job_details
-
-    def _get_job_details(self, job_id: str) -> dict:
-        captured: dict[str, str] = {}
-        orig_get = self.session.get
-
-        def _cap_get(*args, **kwargs):
-            resp = orig_get(*args, **kwargs)
-            captured["html"] = getattr(resp, "text", "") or ""
-            return resp
-
-        self.session.get = _cap_get  # type: ignore[method-assign]
-        try:
-            details = orig_details(self, job_id)
-        finally:
-            self.session.get = orig_get  # type: ignore[method-assign]
-        self._last_repost_meta = _parse_linkedin_timestamps(captured.get("html", ""))
-        return details
-
-    def _process_job(self, job_card, job_id, full_descr):
-        frontier = _update_max_linkedin_id_from_card(job_card, str(job_id))
-        claimed_hours = _parse_card_claimed_hours(job_card)
-        card_reposted = _linkedin_card_is_reposted(job_card)
-        id_reposted, id_lag = _is_linkedin_id_repost(
-            job_id,
-            max_id=frontier,
-            claimed_hours=claimed_hours,
-            max_hours_old=_PATCHED_MAX_HOURS_OLD,
-        )
-
-        # If the card is already a known repost (by ID lag or card text), skip the slow
-        # /jobs/view/{id} detail request so we don't waste time or trigger 429s on reposts.
-        effective_full_descr = False if (card_reposted or id_reposted) else full_descr
-        self._last_repost_meta = {}
-        job_post = orig_process(self, job_card, job_id, effective_full_descr)
-        if job_post is None:
-            return None
-
-        time_tag = _linkedin_card_time(job_card)
-        if job_post.date_posted is None and time_tag is not None:
-            raw_dt = time_tag.get("datetime")
-            if raw_dt:
-                try:
-                    job_post.date_posted = _dt.strptime(str(raw_dt)[:10], "%Y-%m-%d").date()
-                except ValueError:
-                    pass
-        elif isinstance(job_post.date_posted, _dt):
-            job_post.date_posted = job_post.date_posted.date()
-
-        meta = getattr(self, "_last_repost_meta", {}) or {}
-        is_reposted = bool(card_reposted or id_reposted or meta.get("is_reposted"))
-        orig_ms = meta.get("original_listed_at_ms")
-        if orig_ms and job_post.date_posted is not None:
-            dp = job_post.date_posted
-            listed_ms = int(_dt(dp.year, dp.month, dp.day).timestamp() * 1000)
-            if listed_ms - orig_ms > _REPOST_HOUR_MS:
-                is_reposted = True
-        if orig_ms:
-            try:
-                job_post.date_posted = _dt.utcfromtimestamp(orig_ms / 1000.0).date()
-            except (OSError, OverflowError, ValueError):
-                pass
-
-        if is_reposted:
-            job_post.listing_type = "repost"
-            desc = job_post.description or ""
-            reason_note = (
-                f"Reposted (LinkedIn ID lag={id_lag:,}).\n"
-                if id_reposted
-                else "Reposted.\n"
-            )
-            if "reposted" not in desc.lower():
-                job_post.description = reason_note + desc
-        return job_post
-
-    LinkedIn._get_job_details = _get_job_details  # type: ignore[method-assign]
-    LinkedIn._process_job = _process_job  # type: ignore[method-assign]
-    _LINKEDIN_REPOST_PATCHED = True
+    except Exception as exc:  # noqa: BLE001
+        print(f"LinkedIn repost patch skipped: {exc}")
