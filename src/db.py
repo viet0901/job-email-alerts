@@ -262,5 +262,68 @@ class JobDB:
             self._conn.execute("VACUUM")
         return len(to_delete)
 
+    def merge_from(self, other_path: str | Path) -> int:
+        """
+        Merge rows from another seen_jobs.db file (e.g. fetched from origin/job-state)
+        so local Mac runs and cloud GitHub Actions runs share 100% of seen/emailed state.
+        """
+        other = Path(other_path)
+        if not other.exists() or other.stat().st_size == 0:
+            return 0
+        try:
+            src_conn = sqlite3.connect(other)
+            src_conn.row_factory = sqlite3.Row
+            rows = src_conn.execute(
+                """
+                SELECT job_id, title, company, first_seen_at, status,
+                       score, emailed_at, reject_reason, fingerprint
+                FROM seen_jobs
+                """
+            ).fetchall()
+            src_conn.close()
+        except Exception:  # noqa: BLE001
+            return 0
+
+        if not rows:
+            return 0
+
+        merged = 0
+        for r in rows:
+            self._conn.execute(
+                """
+                INSERT INTO seen_jobs (
+                    job_id, title, company, first_seen_at, status,
+                    score, emailed_at, reject_reason, fingerprint
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(job_id) DO UPDATE SET
+                    title = CASE WHEN seen_jobs.title IS NULL OR seen_jobs.title = '' THEN excluded.title ELSE seen_jobs.title END,
+                    company = CASE WHEN seen_jobs.company IS NULL OR seen_jobs.company = '' THEN excluded.company ELSE seen_jobs.company END,
+                    first_seen_at = CASE WHEN excluded.first_seen_at < seen_jobs.first_seen_at THEN excluded.first_seen_at ELSE seen_jobs.first_seen_at END,
+                    status = CASE
+                        WHEN seen_jobs.emailed_at IS NOT NULL OR excluded.emailed_at IS NOT NULL THEN 'emailed'
+                        WHEN seen_jobs.status = 'emailed' OR excluded.status = 'emailed' THEN 'emailed'
+                        ELSE seen_jobs.status
+                    END,
+                    score = COALESCE(seen_jobs.score, excluded.score),
+                    emailed_at = COALESCE(seen_jobs.emailed_at, excluded.emailed_at),
+                    reject_reason = COALESCE(seen_jobs.reject_reason, excluded.reject_reason),
+                    fingerprint = COALESCE(seen_jobs.fingerprint, excluded.fingerprint)
+                """,
+                (
+                    r["job_id"],
+                    r["title"],
+                    r["company"],
+                    r["first_seen_at"],
+                    r["status"],
+                    r["score"],
+                    r["emailed_at"],
+                    r["reject_reason"],
+                    r["fingerprint"],
+                ),
+            )
+            merged += 1
+        self._conn.commit()
+        return merged
+
     def close(self) -> None:
         self._conn.close()

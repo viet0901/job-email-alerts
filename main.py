@@ -18,6 +18,7 @@ from src.board_loader import boards_for, load_ats_boards
 from src.db import JobDB
 from src.emailer import send_test_email
 from src.pipeline import process_batch
+from src.state_sync import pull_and_merge_remote_state, push_remote_state
 from src.sources.ashby import fetch_all_boards as fetch_ashby_boards
 from src.sources.first_party import fetch_all_first_party
 from src.sources.greenhouse import fetch_all_boards
@@ -284,7 +285,9 @@ def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
         max_repost_age_minutes=max_repost_age_minutes,
         reject_reposts=reject_reposts,
     )
-    db = JobDB(_resolve_db_path())
+    db_path = _resolve_db_path()
+    db = JobDB(db_path)
+    pull_and_merge_remote_state(ROOT, db)
     filled = db.backfill_fingerprints()
     if filled:
         print(f"DB: backfilled {filled} fingerprints for cross-source dedupe")
@@ -372,6 +375,8 @@ def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
         f"emailed={totals['emailed']}"
     )
     db.close()
+    if not dry_run:
+        push_remote_state(ROOT, db_path)
     return 0
 
 
