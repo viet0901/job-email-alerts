@@ -2,8 +2,8 @@ name: New-Grad Job Email Alerts
 
 on:
   schedule:
-    # Runs every 15 minutes, 24/7
-    - cron: "*/15 * * * *"
+    # Runs every 15 minutes at off-peak marks (:02, :17, :32, :47) to avoid top-of-hour GitHub queue drops
+    - cron: "2,17,32,47 * * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -33,6 +33,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
+
+      - name: Restore seen_jobs.db from job-state branch
+        run: |
+          if git ls-remote --exit-code --heads origin job-state >/dev/null 2>&1; then
+            git fetch origin job-state --depth=1
+            git checkout FETCH_HEAD -- data/seen_jobs.db || true
+            echo "Restored data/seen_jobs.db from job-state branch"
+          else
+            echo "job-state branch not created yet; using baseline data/seen_jobs.db"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -67,16 +77,13 @@ jobs:
             python main.py
           fi
 
-      - name: Persist seen_jobs.db state
+      - name: Persist seen_jobs.db to job-state branch
         if: always() && github.event.inputs.mode != 'test-email'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/seen_jobs.db
-          if git diff --staged --quiet; then
-            echo "No changes to data/seen_jobs.db"
-          else
-            git commit -m "chore(state): update seen_jobs.db"
-            git pull --rebase origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
+          git checkout --orphan temp-state
+          git rm -rf --cached . >/dev/null 2>&1 || true
+          git add -f data/seen_jobs.db
+          git commit -m "chore(state): update seen_jobs.db"
+          git push --force origin HEAD:refs/heads/job-state
