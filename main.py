@@ -337,6 +337,7 @@ def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
         "freshness_reject": 0,
         "repost_reject": 0,
         "sponsor_reject": 0,
+        "easy_apply_reject": 0,
         "scored": 0,
         "score_capped": 0,
         "emailed": 0,
@@ -371,6 +372,7 @@ def run(*, dry_run: bool = False, force_rescore: bool = False) -> int:
         f"repost_reject={totals.get('repost_reject', 0)} "
         f"freshness_reject={totals['freshness_reject']} "
         f"sponsor_reject={totals['sponsor_reject']} "
+        f"easy_apply_reject={totals.get('easy_apply_reject', 0)} "
         f"scored={totals['scored']} score_capped={totals['score_capped']} "
         f"emailed={totals['emailed']}"
     )

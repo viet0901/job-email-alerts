@@ -9,7 +9,7 @@ from src.filters.freshness import is_fresh_job
 from src.filters.location import is_us_job
 from src.filters.newgrad import is_new_grad_job
 from src.filters.repost import allows_repost
-from src.filters.sponsorship import check_sponsorship
+from src.filters.sponsorship import check_sponsorship, is_linkedin_quick_apply
 from src.filters.title import passes_title_filter
 from src.models import Job
 from src.scoring.llm import ScoreResult, score_with_llm
@@ -56,6 +56,7 @@ def process_batch(
         "freshness_reject": 0,
         "repost_reject": 0,
         "sponsor_reject": 0,
+        "easy_apply_reject": 0,
         "scored": 0,
         "score_capped": 0,
         "emailed": 0,
@@ -192,6 +193,7 @@ def process_batch(
             "location_reject",
             "company_reject",
             "sponsor_reject",
+            "easy_apply_reject",
             "duplicate",
             None,
         }:
@@ -307,6 +309,32 @@ def process_batch(
         if not row or fp in emailed_fps or fp in used_catchup_fps:
             continue
         if not allows_repost(job, reject_reposts=reject_reposts).accept:
+            continue
+        sponsor = check_sponsorship(job)
+        if sponsor.reject:
+            stats["sponsor_reject"] += 1
+            db.mark(
+                job.id,
+                title=job.title,
+                company=job.company,
+                status="sponsor_reject",
+                reject_reason=sponsor.reason,
+                fingerprint=fp,
+            )
+            label = "clearance" if sponsor.reason == "clearance" else "sponsor"
+            print(f"  REJECT {label}: {job.title} @ {job.company} ({sponsor.reason})")
+            continue
+        if is_linkedin_quick_apply(job):
+            stats["easy_apply_reject"] += 1
+            db.mark(
+                job.id,
+                title=job.title,
+                company=job.company,
+                status="easy_apply_reject",
+                reject_reason="linkedin_easy_apply",
+                fingerprint=fp,
+            )
+            print(f"  REJECT easy apply: {job.title} @ {job.company}")
             continue
         used_catchup_fps.add(fp)
         catchup_candidates += 1
@@ -457,7 +485,21 @@ def process_batch(
                 reject_reason=sponsor.reason,
                 fingerprint=fp,
             )
-            print(f"  REJECT sponsor: {job.title} @ {job.company} ({sponsor.reason})")
+            label = "clearance" if sponsor.reason == "clearance" else "sponsor"
+            print(f"  REJECT {label}: {job.title} @ {job.company} ({sponsor.reason})")
+            continue
+
+        if is_linkedin_quick_apply(job):
+            stats["easy_apply_reject"] += 1
+            db.mark(
+                job.id,
+                title=job.title,
+                company=job.company,
+                status="easy_apply_reject",
+                reject_reason="linkedin_easy_apply",
+                fingerprint=fp,
+            )
+            print(f"  REJECT easy apply: {job.title} @ {job.company}")
             continue
 
         used_scores = score_state["used"] if score_state is not None else stats["scored"]

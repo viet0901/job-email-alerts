@@ -35,6 +35,9 @@ NO_SPONSOR_PATTERNS = [
 ]
 
 NO_SPONSOR_RE = re.compile("|".join(f"({p})" for p in NO_SPONSOR_PATTERNS), re.IGNORECASE)
+# Any posting that says "clearance" or "clearances" is ineligible, including
+# "secret clearance", "public trust clearance", and "clearance required".
+_CLEARANCE_RE = re.compile(r"\bclearances?\b", re.IGNORECASE)
 
 
 @dataclass
@@ -45,6 +48,18 @@ class SponsorshipVerdict:
 
 
 def check_sponsorship(job: Job) -> SponsorshipVerdict:
+    blob = job.text_blob
+    clearance = _CLEARANCE_RE.search(blob)
+    if clearance:
+        start = max(0, clearance.start() - 40)
+        end = min(len(blob), clearance.end() + 40)
+        snippet = " ".join(blob[start:end].split())
+        return SponsorshipVerdict(
+            reject=True,
+            reason="clearance",
+            evidence=snippet,
+        )
+
     h1b = (job.h1b_sponsored or "").strip().lower()
     if h1b == "no":
         return SponsorshipVerdict(
@@ -53,7 +68,6 @@ def check_sponsorship(job: Job) -> SponsorshipVerdict:
             evidence="Jobright marked h1bSponsored as No",
         )
 
-    blob = job.text_blob
     match = NO_SPONSOR_RE.search(blob)
     if not match:
         return SponsorshipVerdict(reject=False)
@@ -67,3 +81,14 @@ def check_sponsorship(job: Job) -> SponsorshipVerdict:
         reason="no_sponsor_language",
         evidence=snippet,
     )
+
+
+def is_linkedin_quick_apply(job: Job) -> bool:
+    """LinkedIn Easy Apply / Quick Apply. Guest pages mark these as onsite apply links."""
+    if (job.source or "").strip().lower() != "linkedin":
+        return False
+    raw = job.raw or {}
+    if raw.get("easy_apply") is True:
+        return True
+    listing = str(raw.get("listing_type") or "").lower()
+    return "easy_apply" in listing or "quick_apply" in listing or "quick apply" in listing

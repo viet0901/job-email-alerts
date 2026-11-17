@@ -348,6 +348,8 @@ def _row_to_job(
     raw = dict(row) if hasattr(row, "to_dict") else {}
     if listing_type:
         raw["listing_type"] = listing_type
+    if "easy_apply" in listing_type or "quick apply" in listing_type:
+        raw["easy_apply"] = True
 
     return Job(
         id=f"{id_prefix}:{raw_id}",
@@ -447,6 +449,9 @@ def _parse_linkedin_timestamps(html: str) -> dict:
         re.I,
     ):
         out["is_reposted"] = True
+    # Guest job pages label Easy Apply as an onsite apply link and company-site
+    # apply as offsite. Search cards do not show the badge.
+    out["easy_apply"] = bool(re.search(r"public_jobs_apply-link-onsite\b", html))
     return out
 
 
@@ -456,6 +461,20 @@ def _linkedin_card_time(job_card):
     metadata = job_card.find("div", class_="base-search-card__metadata")
     root = metadata or job_card
     return root.find("time")
+
+
+def _linkedin_card_is_easy_apply(job_card) -> bool:
+    """True when the search card itself shows an Easy Apply or Quick Apply badge."""
+    if job_card is None:
+        return False
+    for tag in job_card.find_all(["span", "button", "a", "div", "strong"]):
+        classes = " ".join(tag.get("class") or []).lower()
+        if "easy-apply" in classes or "easy_apply" in classes or "quick-apply" in classes:
+            return True
+        text = tag.get_text(" ", strip=True)
+        if len(text) <= 24 and re.search(r"\b(?:easy|quick)\s+apply\b", text, re.I):
+            return True
+    return False
 
 
 def _linkedin_card_is_reposted(job_card) -> bool:
@@ -609,6 +628,11 @@ def _patch_linkedin_repost_detection(*, hours_old: float = 24.0) -> None:
                 )
                 if "reposted" not in desc.lower():
                     job_post.description = reason_note + desc
+            easy_apply = _linkedin_card_is_easy_apply(job_card) or bool(meta.get("easy_apply"))
+            if easy_apply:
+                current = (job_post.listing_type or "").strip()
+                if "easy_apply" not in current:
+                    job_post.listing_type = f"{current} easy_apply".strip()
             return job_post
 
         if orig_details is not None and details_name is not None:

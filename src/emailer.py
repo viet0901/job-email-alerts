@@ -90,7 +90,7 @@ def build_digest(items: list[tuple[Job, ScoreResult]]) -> tuple[str, str, str]:
         f"New-grad job digest ({n} role{'s' if n != 1 else ''}) — undergrad / bachelor's",
         f"Generated: {when}",
         "",
-        "US · undergrad new-grad · recent postings · no-sponsorship roles excluded",
+        "US · undergrad new-grad · recent postings · clearance, no-sponsorship, and LinkedIn Easy Apply excluded",
         "",
     ]
     for i, (job, score) in enumerate(items, 1):
